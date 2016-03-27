@@ -29,7 +29,7 @@ public class TLSServer {
 		DefaultIoFilterChainBuilder chain = acceptor.getFilterChain();
 		
 		//设置加密过滤器 
-		SslFilter sslFilter = new SslFilter(BogusSslContextFactory.getInstance(true));
+		SslFilter sslFilter = new DKSSLFilter(BogusSslContextFactory.getInstance(true));
 		//设置客户连接时需要验证客户端证书
 		sslFilter.setNeedClientAuth(true);		
 		chain.addLast("sslFilter", sslFilter);

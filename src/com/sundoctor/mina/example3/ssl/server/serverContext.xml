@@ -18,13 +18,15 @@
   <!-- The SSL configuration -->
   <bean id="keystoreFactory" class="org.apache.mina.filter.ssl.KeyStoreFactory">
     <property name="password" value="123456"/>
-    <property name="dataUrl" value="classpath:com/sundoctor/mina/example3/ssl/server.jks"/>
+    <!--property name="type" value="JCEKS"/-->
+    <property name="dataUrl" value="classpath:com/sundoctor/mina/example3/ssl/Le_AutoServer1.store"/>
   </bean>
   <bean id="keyStore" factory-bean="keystoreFactory" factory-method="newInstance"/> 
 
   <bean id="truststoreFactory" class="org.apache.mina.filter.ssl.KeyStoreFactory">
     <property name="password" value="123456"/>
-    <property name="dataUrl" value="classpath:com/sundoctor/mina/example3/ssl/server.jks"/>
+    <!--property name="type" value="JCEKS"/-->
+    <property name="dataUrl" value="classpath:com/sundoctor/mina/example3/ssl/Le_AutoServer1.store"/>
   </bean>
   <bean id="trustStore" factory-bean="truststoreFactory" factory-method="newInstance"/>  
   
@@ -56,7 +58,7 @@
 
   <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
 
-  <bean id="sslFilter" class="org.apache.mina.filter.ssl.SslFilter">
+  <bean id="sslFilter" class="com.sundoctor.mina.example3.ssl.server.DKSSLFilter">
     <constructor-arg ref="sslContext"/>
     <property name="needClientAuth" value="true"/>
   </bean>

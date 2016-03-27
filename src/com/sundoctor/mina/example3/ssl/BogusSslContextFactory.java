@@ -19,14 +19,14 @@ public class BogusSslContextFactory {
 
 	private static final Logger log = LoggerFactory.getLogger(BogusSslContextFactory.class);
 
-	private static String serverKeys = "server.jks";
+	private static String serverKeys = "Le_AutoServer1.store";
 	private static String serverKeysPassword = "123456";
-	private static String serverTrust = "server.jks";
+	private static String serverTrust = "Le_AutoServer1.store";
 	private static String serverTrustPassword = "123456";
 
-	private static String clientKeys = "client.jks";
+	private static String clientKeys = "Le_AutoClient1.store";
 	private static String clientKeysPassword = "123456";
-	private static String clientTrust = "client.jks";
+	private static String clientTrust = "Le_AutoClient1.store";
 	private static String clientTrustPassword = "123456";
 
 	
@@ -86,26 +86,34 @@ public class BogusSslContextFactory {
 
 		// Initialize the SSLContext to work with our key managers.
 		SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
-		sslContext.init(getKeyManagers(serverKeys, serverKeysPassword), getTrustManagers(serverTrust,serverTrustPassword), null);
+		sslContext.init(getKeyManagers(serverKeys, serverKeysPassword,true),
+				getTrustManagers(serverTrust,serverTrustPassword,true), null);
 
 		return sslContext;
 	}
 
 	private static SSLContext createBougusClientSslContext() throws GeneralSecurityException, IOException {
 		SSLContext context = SSLContext.getInstance(PROTOCOL);
-		context.init(getKeyManagers(clientKeys, clientKeysPassword), getTrustManagers(clientTrust,clientTrustPassword), null);
+		context.init(getKeyManagers(clientKeys, clientKeysPassword,false),
+				getTrustManagers(clientTrust,clientTrustPassword,false), null);
 
 		return context;
 	}
 
-	private static KeyManager[] getKeyManagers(String keysfile, String password) throws GeneralSecurityException,
+	private static KeyManager[] getKeyManagers(String keysfile, String password, boolean server) throws GeneralSecurityException,
 			IOException {
 		// First, get the default KeyManagerFactory.
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance(KEY_MANAGER_FACTORY_ALGORITHM);
 		
 		// Next, set up the TrustStore to use. We need to load the file into
-		// a KeyStore instance.	
-		KeyStore ks = KeyStore.getInstance("JKS");
+		// a KeyStore instance.
+		KeyStore ks = null;
+		if(server){
+			 ks = KeyStore.getInstance("jks");
+		 }else {
+			 ks = KeyStore.getInstance("jks");
+		}
+
 		InputStream in = BogusSslContextFactory.class.getResourceAsStream(keysfile);
 		ks.load(in, password.toCharArray());
 		in.close();
@@ -117,14 +125,19 @@ public class BogusSslContextFactory {
 		return dd;
 	}
 	
-	protected static TrustManager[] getTrustManagers(String trustfile,String pasword) throws IOException, GeneralSecurityException {
+	protected static TrustManager[] getTrustManagers(String trustfile,String pasword, boolean server) throws IOException, GeneralSecurityException {
 		// First, get the default TrustManagerFactory.
 		TrustManagerFactory tmFact = TrustManagerFactory.getInstance(TRUST_MANAGER_FACTORY_ALGORITHM);
 
 		// Next, set up the TrustStore to use. We need to load the file into
 		// a KeyStore instance.		
 		InputStream in = BogusSslContextFactory.class.getResourceAsStream(trustfile);
-		KeyStore ks = KeyStore.getInstance("jks");
+		KeyStore ks;
+		if(server){
+			 ks = KeyStore.getInstance("jks");
+		}else{
+			 ks = KeyStore.getInstance("jks");
+		}
 		ks.load(in, pasword.toCharArray());
 		in.close();
 

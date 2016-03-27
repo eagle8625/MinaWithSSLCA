@@ -3,8 +3,12 @@ package com.sundoctor.mina.example3.ssl.server;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLSession;
+import java.security.cert.X509Certificate;
 
 public class TLSServerHandler extends IoHandlerAdapter {
 
@@ -35,6 +39,19 @@ public class TLSServerHandler extends IoHandlerAdapter {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		logger.debug("[NIO Server]>> messageReceived");
 		System.out.println("[NIO Server Received]>> : {}"+(String) message);
+
+		String msg=message.toString();
+		if( msg.trim().equalsIgnoreCase("") ) {
+			Object obj=session.getAttribute(SslFilter.SSL_SESSION);
+			String certid="";
+			if(obj!=null &&obj instanceof SSLSession)
+			{
+				SSLSession ssl=(SSLSession)obj;
+				X509Certificate cert=(X509Certificate) ssl.getPeerCertificates()[0];
+				certid=cert.getSerialNumber().toString();
+				System.out.println("Cert DN:"+cert.getSubjectDN().getName());
+			}
+		}
 		session.write("you are in security channel");
 	}
 

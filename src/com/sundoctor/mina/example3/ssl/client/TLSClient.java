@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 
+import com.sundoctor.mina.example3.ssl.server.DKSSLFilter;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.session.IoSession;
@@ -25,7 +26,7 @@ public class TLSClient {
 		IoConnector connector = new NioSocketConnector();
 
 		// 设置加密过滤器
-		SslFilter connectorTLSFilter = new SslFilter(BogusSslContextFactory.getInstance(false));
+		SslFilter connectorTLSFilter = new DKSSLFilter(BogusSslContextFactory.getInstance(false));
 		// 设置为客户端模式
 		connectorTLSFilter.setUseClientMode(true);
 		connector.getFilterChain().addLast("SSL", connectorTLSFilter);
