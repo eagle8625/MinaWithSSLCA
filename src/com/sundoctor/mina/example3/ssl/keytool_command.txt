@@ -1,0 +1,39 @@
+--，－－keytool commands，全部文件包括：ca的keystore，证书，server端的keystore，证书，证书请求，client端的keystore，证书，证书请求，
+Gen CA key store
+ keytool -genkeypair -v -alias ca_leauto1 -dname "CN=www.leca.com, OU=leauto, O=le, L=BEIJING, ST=BEIJING, C=CN" -keyalg RSA -keysize 2048 -keypass 123456 -keystore CA_LeAuto1.store -storepass 123456 -validity 10000
+ --export CA's root certificate as a file
+ keytool -export -alias ca_leauto1 -keystore CA_LeAuto1.store -rfc -file ca_leauto1.crt
+
+ keytool -printcert -file ca_leauto1.crt -v
+ 
+  keytool -list -keystore CA_LeAuto1.store
+  keytool -list -keystore Le_AutoServer1.store
+  
+  --show certificate detail comprising certificate chain information
+   keytool -list -v -alias ca_leauto1 -keystore Ca_LeAuto1.store 
+ 
+ --Gen server's key store
+ keytool -genkeypair -v -alias le_autoserver1 -dname "CN=www.leca.com, OU=leauto, O=le, L=BEIJING, ST=BEIJING, C=CN" -keyalg RSA -keysize 2048 -keypass 123456 -keystore Le_AutoServer1.store -storepass 123456 -validity 10000
+ --Gen server's certificate signing request
+ keytool -certreq  -v -alias le_autoserver1 -file Le_AutoServer1.csr -keypass 123456 -keystore Le_AutoServer1.store -storepass 123456
+ 
+ --show certificate request detail
+ keytool -printcertreq -v -file Le_AutoServer1.csr 
+ 
+ 
+ --use CA's root certificate to generate the server's certificate
+ keytool -gencert -infile Le_AutoServer1.csr -outfile Le_AutoServer1.crt -alias ca_leauto1 -dname "CN=www.leca.com, OU=leauto, O=le, L=BEIJING, ST=BEIJING, C=CN" -validity 10000 -keypass 123456 -keystore CA_LeAuto1.store -v
+
+ keytool -printcert -file Le_AutoServer1.crt -v
+ 
+ --client
+  keytool -genkeypair -v -alias le_autoclient1 -dname "CN=www.leca.com, OU=leauto, O=le, L=BEIJING, ST=BEIJING, C=CN" -keyalg RSA -keysize 2048 -keypass 123456 -keystore Le_AutoClient1.store -storepass 123456 -validity 10000
+  
+  keytool -certreq  -v -alias le_autoclient1 -file Le_AutoClient1.csr -keypass 123456 -keystore Le_AutoClient1.store -storepass 123456
+  
+  keytool -gencert -infile Le_AutoClient1.csr -outfile Le_AutoClient1.crt -alias ca_leauto1 -dname "CN=www.leca.com, OU=leauto, O=le, L=BEIJING, ST=BEIJING, C=CN" -validity 10000 -keypass 123456 -keystore CA_LeAuto1.store -v
+ 
+ keytool -importcert -alias ca_leauto1 -file ca_leauto1.crt -keypass 123456 -keystore Le_AutoClient1.store -v
+ 
+ keytool -importcert -alias le_autoclient1 -file Le_AutoClient1.crt -keypass 123456 -keystore Le_AutoClient1.store -v 
+ 
